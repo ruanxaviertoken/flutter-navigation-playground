@@ -2,19 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/route_definer.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 
 class TabRouterDelegate extends RouterDelegate<NavigationPath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
   NavigationState navigationState;
-  final RouteDefiner routeDefiner;
   final int tabIndex;
   final NavigationPath initialPath;
 
   TabRouterDelegate({
     this.navigationState,
-    this.routeDefiner,
     this.tabIndex,
     this.initialPath,
   }) {
@@ -27,10 +24,10 @@ class TabRouterDelegate extends RouterDelegate<NavigationPath>
     return Navigator(
       key: navigatorKey,
       pages: [
-        for (NavigationPath path in navigationState.stackAt(tabIndex))
+        for (NavigationPath path in navigationState.stackAt(tabIndex).where((path) => path is! TemporaryPath))
           CupertinoPage(
             key: ValueKey(path),
-            child: routeDefiner.builderMap[path.runtimeType](path),
+            child: path.builder(context),
             fullscreenDialog: path.fullScreenDialog,
           )
       ],

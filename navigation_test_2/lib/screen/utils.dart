@@ -7,7 +7,7 @@ Future<T> pushCupertinoDialog<T>({
   WidgetBuilder builder,
   bool rootNavigator = true,
 }) async {
-  await NavigationState.instance.push(
+  NavigationState.instance.push(
     TemporaryPath(fullScreenDialog: true),
     rootStack: rootNavigator,
   );

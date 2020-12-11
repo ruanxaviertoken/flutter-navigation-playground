@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/route_definer.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 
 class MainContainer extends StatefulWidget {
@@ -26,14 +25,12 @@ class _MainContainerState extends State<MainContainer> {
     super.initState();
     tabRouterDelegate1 = TabRouterDelegate(
       navigationState: widget.navigationState,
-      routeDefiner: RouteDefiner.instance,
       initialPath: BookListPath(),
       tabIndex: 0,
     );
 
     tabRouterDelegate2 = TabRouterDelegate(
       navigationState: widget.navigationState,
-      routeDefiner: RouteDefiner.instance,
       initialPath: SettingsPath(),
       tabIndex: 1,
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 import 'package:navigation_test_2/screen/list/book_list_state.dart';
@@ -24,7 +23,8 @@ class _BookListScreenState extends State<BookListScreen> {
           return ListTile(
             title: Text(book.title),
             subtitle: Text(book.author),
-            onTap: () => NavigationState.instance.push(BookDetailsPath(book: book)),
+            onTap: () =>
+                NavigationState.instance.push(BookDetailsPath(book: book)),
           );
         },
       ),

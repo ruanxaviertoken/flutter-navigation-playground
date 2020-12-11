@@ -61,6 +61,7 @@ class NavigationState extends ChangeNotifier {
     }
   }
 
+  // Just a mock method to test deeplink navigation
   void navigateTo(NavigationPath path) {
     if(path is SettingsPath) {
       _selectedIndex = 1;

@@ -3,15 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/route_definer.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 
 class RootRouterDelegate extends RouterDelegate<NavigationPath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
   final NavigationState navigationState;
-  final RouteDefiner routeDefiner;
 
-  RootRouterDelegate({this.navigationState, this.routeDefiner}) {
+  RootRouterDelegate({this.navigationState}) {
     navigationState.addListener(notifyListeners);
 
     navigationState.push(
@@ -27,8 +25,9 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
       pages: [
         for (NavigationPath path in navigationState.rootStack.where((path) => path is! TemporaryPath))
           CupertinoPage(
+            // Value key is important. It differentiates the pages so the transition animation can occur
             key: ValueKey(path),
-            child: routeDefiner.builderMap[path.runtimeType](path),
+            child: path.builder(context),
             fullscreenDialog: path.fullScreenDialog,
           )
       ],
@@ -47,6 +46,7 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
 
   @override
   Future<bool> popRoute() async {
+    // TemporaryPath is a fix to framework dialogs problems with android backButton
     if (navigationState.rootStack.last is TemporaryPath) {
       navigationState.pop();
       return super.popRoute();
@@ -55,7 +55,7 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
       notifyListeners();
       return true;
     } else {
-      return false;
+      return super.popRoute();
     }
   }
 
