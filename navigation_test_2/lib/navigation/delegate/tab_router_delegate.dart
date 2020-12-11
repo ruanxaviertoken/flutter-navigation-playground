@@ -1,0 +1,54 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:navigation_test_2/navigation/paths.dart';
+import 'package:navigation_test_2/navigation/route_definer.dart';
+import 'package:navigation_test_2/navigation/state/navigation_state.dart';
+
+class TabRouterDelegate extends RouterDelegate<NavigationPath>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
+  NavigationState navigationState;
+  final RouteDefiner routeDefiner;
+  final int tabIndex;
+  final NavigationPath initialPath;
+
+  TabRouterDelegate({
+    this.navigationState,
+    this.routeDefiner,
+    this.tabIndex,
+    this.initialPath,
+  }) {
+    navigationState.addListener(notifyListeners);
+    navigationState.initiateStack(tabIndex, initialValue: initialPath);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+      pages: [
+        for (NavigationPath path in navigationState.stackAt(tabIndex))
+          CupertinoPage(
+            key: ValueKey(path),
+            child: routeDefiner.builderMap[path.runtimeType](path),
+            fullscreenDialog: path.fullScreenDialog,
+          )
+      ],
+      onPopPage: (route, result) {
+        if(!route.didPop(result)) {
+          return false;
+        } else {
+          navigationState.pop();
+          notifyListeners();
+          return true;
+        }
+      },
+    );
+  }
+
+  @override
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  Future<void> setNewRoutePath(NavigationPath path) async {}
+}
