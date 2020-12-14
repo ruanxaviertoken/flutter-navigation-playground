@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navigation_test_2/navigation/delegate/root_router_delegate.dart';
 import 'package:navigation_test_2/navigation/information_parser/root_route_information_parser.dart';
+import 'package:navigation_test_2/navigation/paths.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 
 void main() {
@@ -28,7 +29,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: _routerDelegate,
+      routerDelegate: RootRouterDelegate(
+          optionalNavigationState: OptionalNavigationState(
+            roots: <NavigationPath>[
+              BookListPath(),
+              SettingsPath(),
+            ],
+          )
+      ),
       routeInformationParser: _informationParser,
       title: 'Navigation 2.0',
       theme: ThemeData(

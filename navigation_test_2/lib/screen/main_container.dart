@@ -23,24 +23,24 @@ class _MainContainerState extends State<MainContainer> {
   @override
   void initState() {
     super.initState();
-    tabRouterDelegate1 = TabRouterDelegate(
-      navigationState: widget.navigationState,
-      initialPath: BookListPath(),
-      tabIndex: 0,
-    );
-
-    tabRouterDelegate2 = TabRouterDelegate(
-      navigationState: widget.navigationState,
-      initialPath: SettingsPath(),
-      tabIndex: 1,
-    );
+    // tabRouterDelegate1 = TabRouterDelegate(
+    //   navigationState: widget.navigationState,
+    //   initialPath: BookListPath(),
+    //   tabIndex: 0,
+    // );
+    //
+    // tabRouterDelegate2 = TabRouterDelegate(
+    //   navigationState: widget.navigationState,
+    //   initialPath: SettingsPath(),
+    //   tabIndex: 1,
+    // );
   }
 
   @override
   void didUpdateWidget(covariant MainContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    tabRouterDelegate1.navigationState = widget.navigationState;
-    tabRouterDelegate2.navigationState = widget.navigationState;
+    // tabRouterDelegate1.navigationState = widget.navigationState;
+    // tabRouterDelegate2.navigationState = widget.navigationState;
   }
 
   @override
@@ -50,10 +50,18 @@ class _MainContainerState extends State<MainContainer> {
         index: widget.navigationState.selectedIndex,
         children: [
           Router(
-            routerDelegate: tabRouterDelegate1,
+            routerDelegate: TabRouterDelegate(
+              navigationState: widget.navigationState,
+              initialPath: BookListPath(),
+              tabIndex: 0,
+            ),
           ),
           Router(
-            routerDelegate: tabRouterDelegate2,
+            routerDelegate: TabRouterDelegate(
+              navigationState: widget.navigationState,
+              initialPath: SettingsPath(),
+              tabIndex: 1,
+            ),
           ),
         ],
       ),

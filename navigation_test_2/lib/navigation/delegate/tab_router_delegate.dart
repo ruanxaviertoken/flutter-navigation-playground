@@ -21,6 +21,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationPath>
 
   @override
   Widget build(BuildContext context) {
+    print(navigationState.stacks);
     return Navigator(
       key: navigatorKey,
       pages: [
