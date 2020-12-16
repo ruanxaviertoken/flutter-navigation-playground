@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navigation_test_2/navigation/delegate/root_router_delegate.dart';
+import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
 import 'package:navigation_test_2/navigation/information_parser/root_route_information_parser.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
@@ -19,9 +20,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp.router(
       routerDelegate: RootRouterDelegate(
         optionalNavigationState: OptionalNavigationState(
-          tabRoots: <NavigationPath>[
-            BookListPath(),
-            SettingsPath(),
+          tabRootsDelegates: <TabRouterDelegate>[
+            TabRouterDelegate(
+              root: BookListPath(),
+            ),
+            TabRouterDelegate(
+              root: SettingsPath(),
+            ),
           ],
         ),
       ),

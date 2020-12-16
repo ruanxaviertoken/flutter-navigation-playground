@@ -1,23 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
 
 class OptionalNavigationState extends ChangeNotifier {
-  List<List<NavigationPath>> _stacks = [];
+  List<List<NavigationPath>> get _stacks => tabRootsDelegates.map(
+        (e) => e.stack,
+      );
   List<NavigationPath> _rootStack = [];
+  List<TabRouterDelegate> tabRootsDelegates;
 
-  factory OptionalNavigationState({List<NavigationPath> tabRoots}) {
-    assert(tabRoots != null && tabRoots.length > 0);
-    instance._stacks = [
-      for (NavigationPath path in tabRoots) [path]
-    ];
-    return instance;
-  }
+  OptionalNavigationState({
+    this.tabRootsDelegates,
+  });
 
   OptionalNavigationState._();
+
   static final OptionalNavigationState instance = OptionalNavigationState._();
 
   int _selectedIndex = 0;
+
   int get selectedIndex => _selectedIndex;
+
   set selectedIndex(int selectedIndex) {
     _selectedIndex = selectedIndex;
     notifyListeners();
@@ -47,7 +51,7 @@ class OptionalNavigationState extends ChangeNotifier {
     try {
       _stacks[_selectedIndex].removeLast();
       return true;
-    } catch(_) {
+    } catch (_) {
       return false;
     }
   }
@@ -56,7 +60,7 @@ class OptionalNavigationState extends ChangeNotifier {
     try {
       _rootStack.removeLast();
       return true;
-    } catch(_) {
+    } catch (_) {
       return false;
     }
   }

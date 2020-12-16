@@ -8,11 +8,13 @@ class TabRouterDelegate extends RouterDelegate<NavigationPath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
   final List<NavigationPath> stack;
   final bool Function() maybePopPage;
+  final NavigationPath root;
 
   TabRouterDelegate({
-    this.stack,
+    // this.stack,
     this.maybePopPage,
-  });
+    this.root,
+  }): this.stack = [root];
   @override
   Widget build(BuildContext context) {
     return Navigator(

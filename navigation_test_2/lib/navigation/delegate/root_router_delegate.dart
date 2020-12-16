@@ -14,9 +14,9 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
 
   RootRouterDelegate({this.optionalNavigationState}) {
     optionalNavigationState.addListener(notifyListeners);
-    for(List<NavigationPath> tabStack in optionalNavigationState.stacks) {
-      tabRouterDelegates.add(TabRouterDelegate(stack: tabStack, maybePopPage: optionalNavigationState.maybePop));
-    }
+    // for(List<NavigationPath> tabStack in optionalNavigationState.stacks) {
+    //   tabRouterDelegates.add(TabRouterDelegate(stack: tabStack, maybePopPage: optionalNavigationState.maybePop));
+    // }
   }
 
   @override
