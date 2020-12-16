@@ -6,26 +6,19 @@ import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 
 class TabRouterDelegate extends RouterDelegate<NavigationPath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
-  NavigationState navigationState;
-  final int tabIndex;
-  final NavigationPath initialPath;
+  final List<NavigationPath> stack;
+  final bool Function() maybePopPage;
 
   TabRouterDelegate({
-    this.navigationState,
-    this.tabIndex,
-    this.initialPath,
-  }) {
-    navigationState.addListener(notifyListeners);
-    navigationState.initiateStack(tabIndex, initialValue: initialPath);
-  }
-
+    this.stack,
+    this.maybePopPage,
+  });
   @override
   Widget build(BuildContext context) {
-    print(navigationState.stacks);
     return Navigator(
       key: navigatorKey,
       pages: [
-        for (NavigationPath path in navigationState.stackAt(tabIndex).where((path) => path is! TemporaryPath))
+        for (NavigationPath path in stack)
           CupertinoPage(
             key: ValueKey(path),
             child: path.builder(context),
@@ -36,9 +29,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationPath>
         if(!route.didPop(result)) {
           return false;
         } else {
-          navigationState.pop();
-          notifyListeners();
-          return true;
+          return maybePopPage();
         }
       },
     );

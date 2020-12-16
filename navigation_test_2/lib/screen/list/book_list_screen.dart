@@ -24,7 +24,7 @@ class _BookListScreenState extends State<BookListScreen> {
             title: Text(book.title),
             subtitle: Text(book.author),
             onTap: () =>
-                NavigationState.instance.push(BookDetailsPath(book: book)),
+                OptionalNavigationState.instance.push(BookDetailsPath(book: book)),
           );
         },
       ),

@@ -21,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
             Text('Settings'),
             CupertinoButton(
               child: Text("OPEN FULLSCREEN"),
-              onPressed: () => NavigationState.instance.push(
+              onPressed: () => OptionalNavigationState.instance.push(
                 SettingsPath(fullScreenDialog: true),
                 rootStack: true,
               ),

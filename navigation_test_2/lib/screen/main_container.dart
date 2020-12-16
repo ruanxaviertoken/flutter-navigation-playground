@@ -4,11 +4,11 @@ import 'package:navigation_test_2/navigation/paths.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 
 class MainContainer extends StatefulWidget {
-  final NavigationState navigationState;
+  final OptionalNavigationState optionalNavigationState;
 
   const MainContainer({
     Key key,
-    this.navigationState,
+    this.optionalNavigationState
   }) : super(key: key);
 
   @override
@@ -16,53 +16,32 @@ class MainContainer extends StatefulWidget {
 }
 
 class _MainContainerState extends State<MainContainer> {
-
-  TabRouterDelegate tabRouterDelegate1;
-  TabRouterDelegate tabRouterDelegate2;
+  List<TabRouterDelegate> routerDelegates = [];
 
   @override
   void initState() {
     super.initState();
-    // tabRouterDelegate1 = TabRouterDelegate(
-    //   navigationState: widget.navigationState,
-    //   initialPath: BookListPath(),
-    //   tabIndex: 0,
-    // );
-    //
-    // tabRouterDelegate2 = TabRouterDelegate(
-    //   navigationState: widget.navigationState,
-    //   initialPath: SettingsPath(),
-    //   tabIndex: 1,
-    // );
-  }
-
-  @override
-  void didUpdateWidget(covariant MainContainer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // tabRouterDelegate1.navigationState = widget.navigationState;
-    // tabRouterDelegate2.navigationState = widget.navigationState;
+    // tabRouterDelegate1 = TabRouterDelegate(flow: widget.optionalNavigationState.flows[0], maybePopPage: widget.optionalNavigationState.maybePop);
+    // tabRouterDelegate2 = TabRouterDelegate(flow: widget.optionalNavigationState.flows[1], maybePopPage: widget.optionalNavigationState.maybePop);
+    for(List<NavigationPath> flow in widget.optionalNavigationState.stacks) {
+      routerDelegates.add(TabRouterDelegate(stack: flow, maybePopPage: widget.optionalNavigationState.maybePop));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
-        index: widget.navigationState.selectedIndex,
+        index: widget.optionalNavigationState.selectedIndex,
         children: [
-          Router(
-            routerDelegate: TabRouterDelegate(
-              navigationState: widget.navigationState,
-              initialPath: BookListPath(),
-              tabIndex: 0,
-            ),
-          ),
-          Router(
-            routerDelegate: TabRouterDelegate(
-              navigationState: widget.navigationState,
-              initialPath: SettingsPath(),
-              tabIndex: 1,
-            ),
-          ),
+          //   Router(
+          //     routerDelegate: tabRouterDelegate1,
+          //   ),
+          // Router(
+          //   routerDelegate: tabRouterDelegate2,
+          // ),
+          for(TabRouterDelegate routerDelegate in routerDelegates)
+            Router(routerDelegate: routerDelegate)
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -76,9 +55,9 @@ class _MainContainerState extends State<MainContainer> {
             label: 'Settings',
           ),
         ],
-        currentIndex: widget.navigationState.selectedIndex,
+        currentIndex: widget.optionalNavigationState.selectedIndex,
         onTap: (newIndex) {
-          widget.navigationState.selectedIndex = newIndex;
+          widget.optionalNavigationState.selectedIndex = newIndex;
         },
       ),
     );

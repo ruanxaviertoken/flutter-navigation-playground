@@ -14,30 +14,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  NavigationState navigationState = NavigationState.instance;
-  RootRouterDelegate _routerDelegate;
-  RootRouteInformationParser _informationParser = RootRouteInformationParser();
-
-  @override
-  void didChangeDependencies() {
-    _routerDelegate = RootRouterDelegate(
-      navigationState: navigationState,
-    );
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: RootRouterDelegate(
-          optionalNavigationState: OptionalNavigationState(
-            roots: <NavigationPath>[
-              BookListPath(),
-              SettingsPath(),
-            ],
-          )
+        optionalNavigationState: OptionalNavigationState(
+          tabRoots: <NavigationPath>[
+            BookListPath(),
+            SettingsPath(),
+          ],
+        ),
       ),
-      routeInformationParser: _informationParser,
+      routeInformationParser: RootRouteInformationParser(),
       title: 'Navigation 2.0',
       theme: ThemeData(
         primarySwatch: Colors.blue,

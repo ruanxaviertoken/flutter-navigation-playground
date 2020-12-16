@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:navigation_test_2/model/book.dart';
+import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
 import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 import 'package:navigation_test_2/screen/book_details_screen.dart';
 import 'package:navigation_test_2/screen/list/book_list_screen.dart';
@@ -14,22 +15,13 @@ abstract class NavigationPath {
 
   String path;
 
-  NavigationPathType type = NavigationPathType.stack;
-
   Widget builder(BuildContext context);
 
   NavigationPath({this.fullScreenDialog = false});
+}
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is NavigationPath &&
-          runtimeType == other.runtimeType &&
-          path == other.path &&
-          type == other.type;
-
-  @override
-  int get hashCode => path.hashCode ^ type.hashCode;
+abstract class RootNavigationPath extends NavigationPath {
+  RouterDelegate get routerDelegate;
 }
 
 class TemporaryPath extends NavigationPath {
@@ -45,27 +37,22 @@ class TemporaryPath extends NavigationPath {
 
   @override
   String path = "tempraryPath";
-
-  @override
-  NavigationPathType type = NavigationPathType.stack;
 }
 
 class MainContainerPath extends NavigationPath {
-  final NavigationState navigationState;
+  final OptionalNavigationState navigationState;
 
   MainContainerPath({this.navigationState});
 
   @override
   Widget builder(BuildContext context) {
     return MainContainer(
-      navigationState: navigationState,
+      optionalNavigationState: navigationState,
     );
   }
 }
 
 class BookListPath extends NavigationPath {
-  NavigationPathType type = NavigationPathType.tab;
-
   @override
   Widget builder(BuildContext context) {
     return BookListScreen();

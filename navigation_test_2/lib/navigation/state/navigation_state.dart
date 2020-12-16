@@ -2,39 +2,81 @@ import 'package:flutter/foundation.dart';
 import 'package:navigation_test_2/navigation/paths.dart';
 
 class OptionalNavigationState extends ChangeNotifier {
-  List<List<NavigationPath>> _paths;
+  List<List<NavigationPath>> _stacks = [];
+  List<NavigationPath> _rootStack = [];
 
-  OptionalNavigationState({@required List<NavigationPath> roots})
-      : this._paths = [
-          for (var path in roots) [path]
-        ],
-        assert(roots != null && roots.length > 0);
+  factory OptionalNavigationState({List<NavigationPath> tabRoots}) {
+    assert(tabRoots != null && tabRoots.length > 0);
+    instance._stacks = [
+      for (NavigationPath path in tabRoots) [path]
+    ];
+    return instance;
+  }
 
-  List<List<NavigationPath>> get paths => _paths;
+  OptionalNavigationState._();
+  static final OptionalNavigationState instance = OptionalNavigationState._();
+
   int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
+  set selectedIndex(int selectedIndex) {
+    _selectedIndex = selectedIndex;
+    notifyListeners();
+  }
 
-  List<NavigationPath> get rootStack => _paths.first;
+  List<List<NavigationPath>> get stacks => _stacks;
 
-  List<NavigationPath> get currentStack => _paths[_selectedIndex];
+  List<NavigationPath> get rootStack => _rootStack;
 
-  List<NavigationPath> get tabs => _paths.map((e) => e.first).toList();
+  List<NavigationPath> get currentStack => _stacks[_selectedIndex];
 
-  void pushDialog() {}
-
-  Future<void> navigateTo(NavigationPath path) async {
-    switch (path.type) {
-      case NavigationPathType.tab:
-        int index = tabs.indexOf(path);
-        if (index > -1) {
-          // TODO: navigar
-        } else {
-          // TODO: tratar 404
-        }
-        break;
-      case NavigationPathType.stack:
-        // TODO: pushar pro _selectedIndex.
-        break;
+  Future<void> push(
+    NavigationPath navigationPath, {
+    bool rootStack = false,
+  }) async {
+    if (rootStack) {
+      _rootStack.add(navigationPath);
+    } else {
+      _stacks[_selectedIndex].add(navigationPath);
     }
+    print(_rootStack);
+    print(_stacks);
+    notifyListeners();
+  }
+
+  bool maybePop() {
+    try {
+      _stacks[_selectedIndex].removeLast();
+      return true;
+    } catch(_) {
+      return false;
+    }
+  }
+
+  bool maybePopRoot() {
+    try {
+      _rootStack.removeLast();
+      return true;
+    } catch(_) {
+      return false;
+    }
+  }
+
+  Future<void> navigateTo(
+    NavigationPath path,
+  ) async {
+    // switch (path.type) {
+    //   case NavigationPathType.tab:
+    //     int index = tabs.indexOf(path);
+    //     if (index > -1) {
+    //       // TODO: navigar
+    //     } else {
+    //       // TODO: tratar 404
+    //     }
+    //     break;
+    //   case NavigationPathType.stack:
+    //     // TODO: pushar pro _selectedIndex.
+    //     break;
+    // }
   }
 }
 

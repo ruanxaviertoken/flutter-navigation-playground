@@ -32,7 +32,7 @@ class BookDetailsScreen extends StatelessWidget {
             Text(book.author),
             CupertinoButton(
               child: Text("OPEN DIALOG"),
-              onPressed: () => pushCupertinoDialog(
+              onPressed: () => showCupertinoDialog(
                 context: context,
                 builder: (context) {
                   return CupertinoAlertDialog(
@@ -41,7 +41,7 @@ class BookDetailsScreen extends StatelessWidget {
                     actions: [
                       CupertinoDialogAction(
                         child: Text("OK"),
-                        onPressed: () => popCupertinoDialog(context),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
                   );
@@ -50,7 +50,7 @@ class BookDetailsScreen extends StatelessWidget {
             ),
             CupertinoButton(
               child: Text("NAVIGATE TO SETTINGS"),
-              onPressed: () => NavigationState.instance.navigateTo(SettingsPath(fullScreenDialog: true)),
+              onPressed: () => OptionalNavigationState.instance.navigateTo(SettingsPath(fullScreenDialog: true)),
             ),
           ],
         ),

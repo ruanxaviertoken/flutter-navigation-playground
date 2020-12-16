@@ -9,16 +9,14 @@ import 'package:navigation_test_2/screen/main_container.dart';
 
 class RootRouterDelegate extends RouterDelegate<NavigationPath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
-  final NavigationState navigationState;
   final OptionalNavigationState optionalNavigationState;
+  List<TabRouterDelegate> tabRouterDelegates = [];
 
-  RootRouterDelegate({this.navigationState, this.optionalNavigationState}) {
-    navigationState.addListener(notifyListeners);
-
-    // navigationState.push(
-    //   MainContainerPath(navigationState: navigationState),
-    //   rootStack: true,
-    // );
+  RootRouterDelegate({this.optionalNavigationState}) {
+    optionalNavigationState.addListener(notifyListeners);
+    for(List<NavigationPath> tabStack in optionalNavigationState.stacks) {
+      tabRouterDelegates.add(TabRouterDelegate(stack: tabStack, maybePopPage: optionalNavigationState.maybePop));
+    }
   }
 
   @override
@@ -26,24 +24,38 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
     return Navigator(
       key: navigatorKey,
       pages: [
-        // MainContainer(())
         CupertinoPage(
+          key: ValueKey(MainContainerPath),
+          // child: MainContainer(optionalNavigationState: optionalNavigationState,)
           child: Scaffold(
             body: IndexedStack(
-              index: navigationState.selectedIndex,
+              index: optionalNavigationState.selectedIndex,
               children: [
-                for (var paths in optionalNavigationState.paths)
+                for (TabRouterDelegate routerDelegate in tabRouterDelegates)
                   Router(
-                    routerDelegate: TabRouterDelegate(
-                      initialPath: paths.first,
-                    ),
-                  ),
+                    routerDelegate: routerDelegate,
+                  )
               ],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Books',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: 'Settings',
+                ),
+              ],
+              currentIndex: optionalNavigationState.selectedIndex,
+              onTap: (newIndex) {
+                optionalNavigationState.selectedIndex = newIndex;
+              },
             ),
           ),
         ),
-        for (NavigationPath path in navigationState.rootStack
-            .where((path) => path is! TemporaryPath))
+        for (NavigationPath path in optionalNavigationState.rootStack)
           CupertinoPage(
             // Value key is important. It differentiates the pages so the transition animation can occur
             key: ValueKey(path.path),
@@ -52,13 +64,10 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
           )
       ],
       onPopPage: (route, result) {
-        if (navigationState.rootStack.length > 1 ||
-            navigationState.currentStack.length > 1) {
-          navigationState.pop();
-          notifyListeners();
-          return route.didPop(result);
-        } else {
+        if (!route.didPop(result)) {
           return false;
+        } else {
+          return optionalNavigationState.maybePopRoot();
         }
       },
     );
@@ -66,18 +75,7 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
 
   @override
   Future<bool> popRoute() async {
-    // TemporaryPath is a fix to framework dialogs problems with android backButton
-    if (navigationState.rootStack.last is TemporaryPath) {
-      navigationState.pop();
-      return super.popRoute();
-    } else if (navigationState.rootStack.length > 1 ||
-        navigationState.currentStack.length > 1) {
-      navigationState.pop();
-      notifyListeners();
-      return true;
-    } else {
-      return super.popRoute();
-    }
+    return optionalNavigationState.maybePopRoot();
   }
 
   @override
