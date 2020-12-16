@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:navigation_test_2/model/book.dart';
-import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
-import 'package:navigation_test_2/navigation/state/navigation_state.dart';
 import 'package:navigation_test_2/screen/book_details_screen.dart';
 import 'package:navigation_test_2/screen/list/book_list_screen.dart';
 import 'package:navigation_test_2/screen/main_container.dart';
 import 'package:navigation_test_2/screen/settings_screen.dart';
 
-enum NavigationPathType { tab, stack }
-
-abstract class NavigationPath {
+abstract class NavigationFactory {
   // This way we can pass parameters to the Page widget
   final bool fullScreenDialog;
 
@@ -17,15 +13,14 @@ abstract class NavigationPath {
 
   Widget builder(BuildContext context);
 
-  NavigationPath({this.fullScreenDialog = false});
+  NavigationFactory({this.fullScreenDialog = false});
 }
 
-abstract class RootNavigationPath extends NavigationPath {
+abstract class RootNavigationFactory extends NavigationFactory {
   RouterDelegate get routerDelegate;
 }
 
-class TemporaryPath extends NavigationPath {
-
+class TemporaryPath extends NavigationFactory {
   final bool fullScreenDialog;
 
   TemporaryPath({
@@ -39,32 +34,25 @@ class TemporaryPath extends NavigationPath {
   String path = "tempraryPath";
 }
 
-class MainContainerPath extends NavigationPath {
-  final OptionalNavigationState navigationState;
+class MainContainerFactory extends NavigationFactory {
 
-  MainContainerPath({this.navigationState});
+  MainContainerFactory();
 
   @override
-  Widget builder(BuildContext context) {
-    return MainContainer(
-      optionalNavigationState: navigationState,
-    );
-  }
+  Widget builder(BuildContext context) => null;
 }
 
-class BookListPath extends NavigationPath {
+class BookListFactory extends NavigationFactory {
   @override
   Widget builder(BuildContext context) {
     return BookListScreen();
   }
 }
 
-class SettingsPath extends NavigationPath {
-  NavigationPathType type = NavigationPathType.tab;
-
+class SettingsFactory extends NavigationFactory {
   final bool fullScreenDialog;
 
-  SettingsPath({
+  SettingsFactory({
     this.fullScreenDialog = false,
   }) : super(fullScreenDialog: fullScreenDialog);
 
@@ -74,7 +62,7 @@ class SettingsPath extends NavigationPath {
   }
 }
 
-class BookDetailsPath extends NavigationPath {
+class BookDetailsFactory extends NavigationFactory {
   final Book book;
   final int bookId;
 
@@ -86,5 +74,5 @@ class BookDetailsPath extends NavigationPath {
     );
   }
 
-  BookDetailsPath({this.book, this.bookId});
+  BookDetailsFactory({this.book, this.bookId});
 }

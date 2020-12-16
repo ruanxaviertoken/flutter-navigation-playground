@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:navigation_test_2/navigation/delegate/root_router_delegate.dart';
 import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
-import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/state/navigation_state.dart';
+import 'package:navigation_test_2/navigation/navigation_factories.dart';
+import 'package:navigation_test_2/navigation/state/navigation_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -21,9 +21,9 @@ class SettingsScreen extends StatelessWidget {
             Text('Settings'),
             CupertinoButton(
               child: Text("OPEN FULLSCREEN"),
-              onPressed: () => OptionalNavigationState.instance.push(
-                SettingsPath(fullScreenDialog: true),
-                rootStack: true,
+              onPressed: () => NavigationController.instance.push(
+                SettingsFactory(fullScreenDialog: true),
+                toRoot: true,
               ),
             ),
           ],

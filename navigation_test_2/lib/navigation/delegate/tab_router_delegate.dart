@@ -1,30 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/state/navigation_state.dart';
+import 'package:navigation_test_2/navigation/navigation_factories.dart';
 
-class TabRouterDelegate extends RouterDelegate<NavigationPath>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
-  final List<NavigationPath> stack;
-  final bool Function() maybePopPage;
-  final NavigationPath root;
+class TabRouterDelegate extends RouterDelegate<NavigationFactory>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationFactory> {
+  final List<NavigationFactory> stack;
+  final NavigationFactory root;
+  bool Function() maybePopPage;
 
   TabRouterDelegate({
-    // this.stack,
+    @required this.root,
     this.maybePopPage,
-    this.root,
   }): this.stack = [root];
   @override
   Widget build(BuildContext context) {
     return Navigator(
       key: navigatorKey,
       pages: [
-        for (NavigationPath path in stack)
+        for (NavigationFactory factory in stack)
           CupertinoPage(
-            key: ValueKey(path),
-            child: path.builder(context),
-            fullscreenDialog: path.fullScreenDialog,
+            key: ValueKey(factory),
+            child: factory.builder(context),
+            fullscreenDialog: factory.fullScreenDialog,
           )
       ],
       onPopPage: (route, result) {
@@ -41,5 +39,5 @@ class TabRouterDelegate extends RouterDelegate<NavigationPath>
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
-  Future<void> setNewRoutePath(NavigationPath path) async {}
+  Future<void> setNewRoutePath(NavigationFactory path) async {}
 }

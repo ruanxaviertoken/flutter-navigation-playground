@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
-import 'package:navigation_test_2/navigation/paths.dart';
+import 'package:navigation_test_2/navigation/navigation_factories.dart';
 
 class RootRouteInformationParser
-    extends RouteInformationParser<NavigationPath> {
+    extends RouteInformationParser<NavigationFactory> {
   @override
-  Future<NavigationPath> parseRouteInformation(
+  Future<NavigationFactory> parseRouteInformation(
     RouteInformation routeInformation,
   ) async {
-    return BookListPath();
+    return BookListFactory();
   }
 }

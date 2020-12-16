@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/state/navigation_state.dart';
+import 'package:navigation_test_2/navigation/navigation_factories.dart';
+import 'package:navigation_test_2/navigation/state/navigation_controller.dart';
 import 'package:navigation_test_2/screen/list/book_list_state.dart';
 
 class BookListScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _BookListScreenState extends State<BookListScreen> {
             title: Text(book.title),
             subtitle: Text(book.author),
             onTap: () =>
-                OptionalNavigationState.instance.push(BookDetailsPath(book: book)),
+                NavigationController.instance.push(BookDetailsFactory(book: book)),
           );
         },
       ),

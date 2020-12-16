@@ -3,20 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:navigation_test_2/navigation/delegate/tab_router_delegate.dart';
-import 'package:navigation_test_2/navigation/paths.dart';
-import 'package:navigation_test_2/navigation/state/navigation_state.dart';
-import 'package:navigation_test_2/screen/main_container.dart';
+import 'package:navigation_test_2/navigation/navigation_factories.dart';
+import 'package:navigation_test_2/navigation/state/navigation_controller.dart';
 
-class RootRouterDelegate extends RouterDelegate<NavigationPath>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationPath> {
-  final OptionalNavigationState optionalNavigationState;
-  List<TabRouterDelegate> tabRouterDelegates = [];
+class RootRouterDelegate extends RouterDelegate<NavigationFactory>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationFactory> {
+  NavigationController navigationController;
 
-  RootRouterDelegate({this.optionalNavigationState}) {
-    optionalNavigationState.addListener(notifyListeners);
-    // for(List<NavigationPath> tabStack in optionalNavigationState.stacks) {
-    //   tabRouterDelegates.add(TabRouterDelegate(stack: tabStack, maybePopPage: optionalNavigationState.maybePop));
-    // }
+  RootRouterDelegate({@required this.navigationController}) {
+    navigationController.addListener(notifyListeners);
   }
 
   @override
@@ -25,13 +20,13 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
       key: navigatorKey,
       pages: [
         CupertinoPage(
-          key: ValueKey(MainContainerPath),
-          // child: MainContainer(optionalNavigationState: optionalNavigationState,)
+          key: ValueKey(MainContainerFactory),
           child: Scaffold(
             body: IndexedStack(
-              index: optionalNavigationState.selectedIndex,
+              index: navigationController.selectedTabIndex,
               children: [
-                for (TabRouterDelegate routerDelegate in tabRouterDelegates)
+                for (TabRouterDelegate routerDelegate
+                    in navigationController.tabRouterDelegates)
                   Router(
                     routerDelegate: routerDelegate,
                   )
@@ -48,26 +43,26 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
                   label: 'Settings',
                 ),
               ],
-              currentIndex: optionalNavigationState.selectedIndex,
+              currentIndex: navigationController.selectedTabIndex,
               onTap: (newIndex) {
-                optionalNavigationState.selectedIndex = newIndex;
+                navigationController.selectedTabIndex = newIndex;
               },
             ),
           ),
         ),
-        for (NavigationPath path in optionalNavigationState.rootStack)
+        for (NavigationFactory factory in navigationController.rootStack)
           CupertinoPage(
             // Value key is important. It differentiates the pages so the transition animation can occur
-            key: ValueKey(path.path),
-            child: path.builder(context),
-            fullscreenDialog: path.fullScreenDialog,
+            key: ValueKey(factory),
+            child: factory.builder(context),
+            fullscreenDialog: factory.fullScreenDialog,
           )
       ],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
         } else {
-          return optionalNavigationState.maybePopRoot();
+          return navigationController.maybePopRoot();
         }
       },
     );
@@ -75,12 +70,16 @@ class RootRouterDelegate extends RouterDelegate<NavigationPath>
 
   @override
   Future<bool> popRoute() async {
-    return optionalNavigationState.maybePopRoot();
+    if(navigationController.maybePop()) {
+      return true;
+    } else {
+      return super.popRoute();
+    }
   }
 
   @override
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
-  Future<void> setNewRoutePath(NavigationPath path) async {}
+  Future<void> setNewRoutePath(NavigationFactory path) async {}
 }
