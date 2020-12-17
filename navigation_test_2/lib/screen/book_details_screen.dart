@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:navigation_test_2/model/book.dart';
+import 'package:navigation_test_2/navigation/navigation_factories.dart';
+import 'package:navigation_test_2/navigation/state/navigation_controller.dart';
 import 'package:navigation_test_2/screen/list/book_list_state.dart';
 
 class BookDetailsScreen extends StatelessWidget {
@@ -45,6 +47,10 @@ class BookDetailsScreen extends StatelessWidget {
                 },
               ),
             ),
+        CupertinoButton(
+            child: Text("OPEN SETTINGS"),
+            onPressed: () => NavigationController.instance.push(SettingsFactory()),
+          ),
             // CupertinoButton(
             //   child: Text("NAVIGATE TO SETTINGS"),
             //   onPressed: () => NavigationController.instance.navigateTo(SettingsFactory(fullScreenDialog: true)),

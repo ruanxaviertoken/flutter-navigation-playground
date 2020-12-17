@@ -8,7 +8,7 @@ import 'package:navigation_test_2/navigation/state/navigation_controller.dart';
 
 class RootRouterDelegate extends RouterDelegate<NavigationFactory>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationFactory> {
-  NavigationController navigationController;
+  final NavigationController navigationController;
 
   RootRouterDelegate({@required this.navigationController}) {
     navigationController.addListener(notifyListeners);
@@ -16,6 +16,7 @@ class RootRouterDelegate extends RouterDelegate<NavigationFactory>
 
   @override
   Widget build(BuildContext context) {
+
     return Navigator(
       key: navigatorKey,
       pages: [
@@ -25,10 +26,9 @@ class RootRouterDelegate extends RouterDelegate<NavigationFactory>
             body: IndexedStack(
               index: navigationController.selectedTabIndex,
               children: [
-                for (TabRouterDelegate routerDelegate
-                    in navigationController.tabRouterDelegates)
+                for (int i = 0; i < navigationController.tabRouterDelegates.length; i++)
                   Router(
-                    routerDelegate: routerDelegate,
+                    routerDelegate: navigationController.tabRouterDelegates[i],
                   )
               ],
             ),
@@ -62,7 +62,7 @@ class RootRouterDelegate extends RouterDelegate<NavigationFactory>
         if (!route.didPop(result)) {
           return false;
         } else {
-          return navigationController.maybePopRoot();
+          return navigationController.maybePop();
         }
       },
     );
@@ -70,11 +70,9 @@ class RootRouterDelegate extends RouterDelegate<NavigationFactory>
 
   @override
   Future<bool> popRoute() async {
-    if(navigationController.maybePop()) {
-      return true;
-    } else {
-      return super.popRoute();
-    }
+    // This will allow popping dialogs through the android back button
+    // This solution won't work with dialogs pushed to a child navigator
+    return await super.popRoute() || navigationController.maybePop();
   }
 
   @override
